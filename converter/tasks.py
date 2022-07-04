@@ -32,7 +32,7 @@ def callable_hook(self, response):
 ydl_opts = {'format': 'bestaudio/best',
             'extractaudio': True,
             'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': '128', }],
-            'outtmpl': "static/media/%(title)s.%(ext)s",
+            'outtmpl': "staticfiles/%(title)s.%(ext)s",
             'noplaylist': True,
             'quiet': False,
             'logger': MyLogger(),
