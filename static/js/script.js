@@ -1,12 +1,14 @@
 $('#contactButton').click(function() {
     $('#alert').hide();
-    $('#contact').fadeToggle('slow').delay(500).fadeToggle('slow');
+    $('#about').hide();
+    $('#contact').toggle();
 
 });
 
 $('#aboutButton').click(function() {
-    $('#card-container, #about').slideToggle('slow', function() {
-    });
+    $('#alert').hide();
+    $('#contact').hide();
+    $('#card-container, #about').toggle();
 });
 
 
