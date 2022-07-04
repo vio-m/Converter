@@ -1,0 +1,8 @@
+*.env
+db.sqlite3
+migrations/
+.idea/
+__pycache__/
+*.pyc
+*.log
+*.pot
