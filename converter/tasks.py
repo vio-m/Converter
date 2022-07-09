@@ -1,8 +1,8 @@
 from __future__ import absolute_import, unicode_literals
-from celery import shared_task, current_task
+from celery import shared_task
 from celery_progress.backend import ProgressRecorder
 import youtube_dl
-import time
+
 
 
 class MyLogger(object):
@@ -32,7 +32,7 @@ def callable_hook(self, response):
 ydl_opts = {'format': 'bestaudio/best',
             'extractaudio': True,
             'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': '128', }],
-            'outtmpl': "static/media/%(title)s.%(ext)s",
+            'outtmpl': "media/%(title)s.%(ext)s",
             'noplaylist': True,
             'quiet': False,
             'logger': MyLogger(),
