@@ -116,7 +116,7 @@ AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 AWS_LOCATION = 'static'
-AWS_DEFAULT_ACL = 'public-read'
+AWS_DEFAULT_ACL = None  #'public-read'
 AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 AWS_QUERYSTRING_AUTH = False
 AWS_HEADERS = {'Access-Control-Allow-Origin': '*', }
@@ -130,7 +130,8 @@ MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 #STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 #MEDIA_URL = '/media/'
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+#STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 
 # Default primary key field type
@@ -140,7 +141,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Heroku settings
 
-django_heroku.settings(locals())
+django_heroku.settings(locals(), staticfiles=False)
 
 
 # Celery settings
