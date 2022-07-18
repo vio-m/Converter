@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
 import youtube_dl
-
+from django.conf import settings
 
 
 class MyLogger(object):
@@ -29,10 +29,11 @@ def callable_hook(self, response):
     else:
         pass
 
+dld_url = f'{settings.MEDIA_URL}%(title)s.%(ext)s'
 ydl_opts = {'format': 'bestaudio/best',
             'extractaudio': True,
             'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': '128', }],
-            'outtmpl': "static/%(title)s.%(ext)s",
+            'outtmpl': dld_url,
             'noplaylist': True,
             'quiet': False,
             'logger': MyLogger(),

@@ -95,7 +95,7 @@
                         CeleryProgressBar.initProgressBar(progressUrl, {onSuccess: processSuccess,})
                         $('#progress').show();
                         $('#display-title').hide();
-                        $('#download-btn').html('<a href="static/' +track_title+ '.mp3" style="text-decoration: none; color: black;" download>Download mp3</a>');
+                        $('#download-btn').html('<a href="https://veeoh-bucket.s3.amazonaws.com/media/' +track_title+ '.mp3" style="text-decoration: none; color: black;" download>Download mp3</a>');
                     }
                 })
             })
