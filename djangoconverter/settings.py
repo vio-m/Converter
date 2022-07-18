@@ -146,7 +146,7 @@ django_heroku.settings(locals(), staticfiles=False)
 
 # Celery settings
 
-CELERY_BROKER_URL = str(os.getenv('CELERY_BROKER_URL'))
+CELERY_BROKER_URL = 'amqps://nhhaxwfr:OIki715lLak2CZ6tmqpaSiG_Oy4fdb9b@whale.rmq.cloudamqp.com/nhhaxwfr'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
