@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+
+<div class="container">
+
+    <div class="card">
+        <div class="card-image"><img src="{{ thumb }}" alt=""></div>
+        <div id="progress" class="">
+            {% include 'progress.html' %}
+        </div>
+        <div class="card-title">{{ title }}</div>
+    </div>
+
+    <div>
+        <div id="alert" class="message"></div>
+        <!--div id="contact" class="message" > CONTACT @ MAIL . COM </div-->
+    </div>
+
+    <form id="search-form" action="{% url 'index' %}" method="POST">
+        {% csrf_token %}
+        <input id="field" type="text" name="url"  placeholder="Enter YouTube URL" aria-label="Search" title="url" required>
+        <div class="buttons">
+            <select id="quality-selector" name="quality" >
+                <option value="192" selected disabled hidden>QLT</option>
+                <option value="96">Lo-Fi</option>
+                <option value="320">Hi-Fi</option>
+            </select>
+            <select id="format-selector" name="format" >
+                <option value="mp3" hidden>TYPE</option>
+                <option value="wav">.wav</option>
+                <option value="aac">.aac</option>
+                <option value="flac">.flac</option>
+            </select>
+            <button id="convert-btn" class="button" href="{% url 'convert'%}">Convert</button>
+            <button id="download-btn" class="button" onClick="downloadAndDelete()" >Download</button>
+        </div>
+    </form>
+
+
+</div>
+    <script>
+        // AJAX that gets the track info...
+        $("#search-form").submit(function (e) {
+            e.preventDefault();
+
+            var serializedURL = $("input").serialize();
+            var serializedData = $("form").serialize();
+            var url = window.url;
+            var format = $('#format-selector').val();
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'index' %}",
+                data: serializedData,
+                headers:{"X-CSRFToken": '{{ csrf_token }}'},
+                async: false,
+                success: function (context) {
+                    window.url = context['url'];
+                    window.title = context['title'];
+                    $("#search-form").trigger('reset');
+                    $('.card').show();
+                    $('#alert').hide();
+                    $('.card-title').html(context.title);
+                    $('.card-image').html('<img src="'+context.thumb+ '" />');
+                    $('#convert-btn').text("Converting ...");
+                },
+                error: function (context) {
+                    var message = context['responseText'];
+                    $("#search-form").trigger('reset');
+                    $('.card').hide();
+                    $('#alert').show();
+                    $('#alert').html(message);
+                }
+            })
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'convert' %}",
+                data: serializedData,
+                headers:{"X-CSRFToken": '{{ csrf_token }}'},
+                success: function (context) {
+                    var task_id = context['task_id'];
+                    var track_title = window.title;
+                    var progressUrl = window.progressUrl
+                    var progressUrl = progressUrl.replace("97281f8f-e4ae-4d14-9a54-d8c7f0d255ac", task_id);
+                    CeleryProgressBar.initProgressBar(progressUrl, {onSuccess: processSuccess,})
+                    $('#progress').show();
+                    //$('#download-btn').html('<a href="static/media/' +track_title+"."+format+ ' " style="text-decoration: none; color: grey;" onClick="downloadAndDelete()" download>Download</a>');
+                }
+            })
+            function processSuccess() {
+                $('#convert-btn').hide();
+                $('#download-btn').show();
+            }
+        })
+
+        function downloadAndDelete() {
+            var track_title = window.title;
+            /*window.location = "{% url 'delete' %}"*/
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'delete' %}",
+                data: {"title": track_title},
+                headers:{"X-CSRFToken": '{{ csrf_token }}'},
+                success: function(data, status, xhr) {
+                    var headerValue = xhr.getResponseHeader('Custom-Filepath');
+                    var a = document.createElement("a");
+                    a.href = headerValue;
+                    a.download = headerValue;
+                    a.style.display = "none";
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                },
+                error: (err) => {
+                    console.log(err)
+                    $('#alert').show();
+                    $('#alert').html(err);
+                }
+            }).done(function (context) {
+                    $('#convert-btn').show();
+                    $('#convert-btn').text('Convert');
+                    $('#download-btn').hide();
+            })
+        }
+
+        $( document ).ready(function() {
+            if(sessionStorage.getItem("firstTime")===null) {
+                $('#alert').show();
+                $('#alert').html("<h4> YouTube to Audio converter</h4><h6>About:</h6><h6>Video length: under 10 minutes.</h6><h6>Works only for YouTube videos.</h6><h6>Default settings are MID-Fi quality and .mp3 format.</h6>");
+                sessionStorage.setItem("firstTime","done");
+            }
+        });
+
+
+    </script>
+
+
+{% endblock content %}
+
+
+'''
+// AJAX that converts to mp3...
+
+        $("#convert-btn").click(function(e) {
+            //e.preventDefault();
+            console.log("js convert func")
+            var url = window.url;
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'convert' %}",
+                data: {"url": url},
+                headers:{"X-CSRFToken": '{{ csrf_token }}'},
+                success: function (context) {
+                    var task_id = context['task_id'];
+                    var track_title = window.title;
+                    var progressUrl = window.progressUrl
+                    var progressUrl = progressUrl.replace("97281f8f-e4ae-4d14-9a54-d8c7f0d255ac", task_id);
+                    CeleryProgressBar.initProgressBar(progressUrl, {onSuccess: processSuccess,})
+                    $('#progress').show();
+                    $('.card-title').hide();
+                    $('#download-btn').html('<a href="static/media/' +track_title+ '.mp3" style="text-decoration: none; color: grey;" download>Download mp3</a>');
+                }
+            })
+        })
+        function processSuccess() {
+            console.log('Process Success Function');
+        }
+
+
+'''

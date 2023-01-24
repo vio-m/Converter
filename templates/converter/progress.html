@@ -1,0 +1,26 @@
+{% load static %}
+
+<div>
+    <div class="power">
+        <div class="power_batery">
+            <div class="progress-wrapper batery_wrapper">
+                <div id='progress-bar' class="progress-bar batery_fill">
+                    <div class="battery_fill_top"></div>
+                    <div class="battery_fill_bottom"></div>
+                </div>
+            </div>
+            <div id="progress-bar-message"></div>
+        </div>
+    </div>
+
+
+    <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            window.progressUrl = "{% url 'celery_progress:task_status' "97281f8f-e4ae-4d14-9a54-d8c7f0d255ac" %}";
+        });
+    </script>
+
+
+</div>
